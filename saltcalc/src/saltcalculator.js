@@ -6,6 +6,17 @@ const SaltCalculator = () => {
 	const [salinityPPT, setSalinityPPT] = useState("");
 	const [saltType, setSaltType] = useState("Pond Salt (NaCl)");
 	const [result, setResult] = useState("");
+	const [showPopup, setShowPopup] = useState(false);
+
+	const Popup = ({ message, onClose }) => {
+		return (
+		  <div className="popup-overlay" onClick={onClose}>
+			<div className="popup-content" onClick={(e) => e.stopPropagation()}>
+			  <p>{message}</p>
+			</div>
+		  </div>
+		);
+	};
 
 	const calculateSalt = () => {
 		const volume = parseFloat(volumeLiters);
@@ -13,6 +24,7 @@ const SaltCalculator = () => {
 		//Check if inputs are valid
 		if (isNaN(volume) || isNaN(salinity) || volume <= 0 || salinity < 0) {
 			setResult('Please enter valid numbers for volume and salinity.');
+			setShowPopup(true);
 			return;
 		}
 
@@ -43,14 +55,12 @@ const SaltCalculator = () => {
 			message += ' (ensure purity)';
 		}
 		setResult(message);
+		setShowPopup(true);
 	};
 
-	const handleClear = () => {
-		setVolumeLiters("");
-		setSalinityPPT("");
-		setSaltType("Pond Salt (NaCl)");
-		setResult("");
-	};
+	const closePopup = () => {
+		setShowPopup(false);
+    };
 
 	return (
 		<div className="salt-calculator">
@@ -91,7 +101,9 @@ const SaltCalculator = () => {
 					<button type="submit">Calculate</button>
 				</div>
 			</form>
-			{result && <div className="message">{result}</div>}
+            {showPopup && <Popup message={result} onClose={closePopup} />}
+			{/* {result && <div className="message">{result}</div>} */}
+
 		</div>
 	);
 };
